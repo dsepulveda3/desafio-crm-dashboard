@@ -52,20 +52,20 @@ export function DataTable({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {showDateFilter && (
-        <div className="flex items-center gap-3">
-          <label className="text-sm text-slate-400">Filtrar por fecha:</label>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <label className="text-xs sm:text-sm text-slate-400">Filtrar:</label>
           <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-slate-500"
+            className="bg-slate-800 border border-slate-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:border-slate-500"
           />
           {dateFilter && (
             <button
               onClick={() => setDateFilter("")}
-              className="text-sm text-slate-400 hover:text-white"
+              className="text-xs sm:text-sm text-slate-400 hover:text-white"
             >
               Limpiar
             </button>
@@ -73,15 +73,15 @@ export function DataTable({
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="data-table">
+      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+        <table className="data-table text-xs sm:text-sm min-w-full">
           <thead>
             <tr>
-              <th>Empresa</th>
-              <th>Origen</th>
-              {!compact && <th>Responsable</th>}
-              {!hideMonto && <th>Monto</th>}
-              {!hideEstado && <th>Estado</th>}
+              <th className="whitespace-nowrap">Empresa</th>
+              <th className="whitespace-nowrap">Origen</th>
+              {!compact && <th className="whitespace-nowrap hidden sm:table-cell">Responsable</th>}
+              {!hideMonto && <th className="whitespace-nowrap">Monto</th>}
+              {!hideEstado && <th className="whitespace-nowrap">Estado</th>}
             </tr>
           </thead>
           <tbody>
@@ -89,17 +89,17 @@ export function DataTable({
               const monto = parseMonto(row["Monto Donación"]);
               return (
                 <tr key={`${row.Empresa}-${idx}`}>
-                  <td className="font-medium">{row.Empresa}</td>
+                  <td className="font-medium max-w-[120px] sm:max-w-none truncate">{row.Empresa}</td>
                   <td>
                     <StatusBadge status={row.Origen} />
                   </td>
                   {!compact && (
-                    <td className="text-slate-400">
+                    <td className="text-slate-400 hidden sm:table-cell">
                       {row["Responsable "]?.trim() || "Sin asignar"}
                     </td>
                   )}
                   {!hideMonto && (
-                    <td className="font-mono-numbers">
+                    <td className="font-mono-numbers whitespace-nowrap">
                       {monto > 0 ? formatCurrency(monto) : "-"}
                     </td>
                   )}
@@ -119,12 +119,12 @@ export function DataTable({
         <div className="text-center pt-2">
           <button
             onClick={handleShowMore}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs sm:text-sm transition-colors"
           >
             Mostrar más (+20)
           </button>
-          <p className="text-xs text-slate-500 mt-2">
-            Mostrando {displayCount} de {filteredData.length} registros
+          <p className="text-xs text-slate-500 mt-1 sm:mt-2">
+            Mostrando {displayCount} de {filteredData.length}
           </p>
         </div>
       )}

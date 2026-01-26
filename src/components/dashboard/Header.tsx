@@ -24,12 +24,12 @@ export function Header({
     <header
       className={`bg-gradient-to-r ${variantColors[variant]} to-transparent border-b border-slate-800`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-6 min-w-0">
             <Link
               href="/"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors flex-shrink-0"
             >
               <svg
                 className="w-5 h-5"
@@ -45,23 +45,25 @@ export function Header({
                 />
               </svg>
             </Link>
-            <div>
-              <h1 className="text-2xl font-bold">{title}</h1>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold truncate">{title}</h1>
               {subtitle && (
-                <p className="text-sm text-slate-400">{subtitle}</p>
+                <p className="text-xs sm:text-sm text-slate-400 truncate">{subtitle}</p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Auto-refresh activo
             </div>
+            {/* Mobile: solo el punto verde */}
+            <span className="sm:hidden w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             {onRefresh && (
               <button
                 onClick={onRefresh}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors flex items-center gap-2"
+                className="p-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors flex items-center gap-2"
               >
                 <svg
                   className="w-4 h-4"
@@ -76,7 +78,7 @@ export function Header({
                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                   />
                 </svg>
-                Actualizar
+                <span className="hidden sm:inline">Actualizar</span>
               </button>
             )}
           </div>

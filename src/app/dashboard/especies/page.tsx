@@ -50,9 +50,9 @@ export default function DashboardEspecies() {
         onRefresh={refresh}
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Métricas Globales */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
           <div className="animate-slide-up stagger-1">
             <MetricCard
               title="Empresas Comprometidas"
@@ -85,27 +85,27 @@ export default function DashboardEspecies() {
         </section>
 
         {/* Progreso de Entregas */}
-        <section className="card-surface rounded-xl p-8 animate-slide-up stagger-5">
-          <h3 className="text-xl font-semibold mb-6">Progreso de Entregas</h3>
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        <section className="card-surface rounded-xl p-4 sm:p-8 animate-slide-up stagger-5">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">Progreso de Entregas</h3>
+          <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-8">
             <ProgressRing
               value={progresoEntrega}
-              size={140}
+              size={120}
               color="cyan"
               label={`${especieEntregado.length}/${especieRecords.length}`}
               sublabel="completadas"
             />
 
-            <div className="flex-1 space-y-4 w-full">
+            <div className="flex-1 space-y-3 sm:space-y-4 w-full">
               {/* Barra Entregados */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-emerald-400">Entregado (Convertido Pagado)</span>
+              <div className="space-y-1 sm:space-y-2">
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <span className="text-emerald-400">Entregado</span>
                   <span className="font-mono-numbers">
                     {especieEntregado.length}
                   </span>
                 </div>
-                <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 sm:h-4 bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
                     style={{
@@ -120,14 +120,14 @@ export default function DashboardEspecies() {
               </div>
 
               {/* Barra Pendientes */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-amber-400">Pendiente (Convertido Pendiente)</span>
+              <div className="space-y-1 sm:space-y-2">
+                <div className="flex justify-between text-xs sm:text-sm">
+                  <span className="text-amber-400">Pendiente</span>
                   <span className="font-mono-numbers">
                     {especiePendiente.length}
                   </span>
                 </div>
-                <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 sm:h-4 bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
                     style={{
@@ -145,10 +145,10 @@ export default function DashboardEspecies() {
         </section>
 
         {/* Tablas por Estado */}
-        <section className="grid md:grid-cols-2 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Entregas Completadas */}
-          <div className="card-glow-emerald rounded-xl p-6 animate-slide-up stagger-6">
-            <h3 className="font-semibold text-emerald-400 mb-4">
+          <div className="card-glow-emerald rounded-xl p-4 sm:p-6 animate-slide-up stagger-6">
+            <h3 className="font-semibold text-emerald-400 mb-3 sm:mb-4 text-sm sm:text-base">
               Entregas Completadas ({especieEntregado.length})
             </h3>
             {especieEntregado.length > 0 ? (
@@ -160,15 +160,15 @@ export default function DashboardEspecies() {
                 showDateFilter
               />
             ) : (
-              <p className="text-slate-500 text-center py-4">
+              <p className="text-slate-500 text-center py-4 text-sm">
                 No hay entregas completadas
               </p>
             )}
           </div>
 
           {/* Pendientes de Entrega */}
-          <div className="card-glow-amber rounded-xl p-6 animate-slide-up stagger-6">
-            <h3 className="font-semibold text-amber-400 mb-4">
+          <div className="card-glow-amber rounded-xl p-4 sm:p-6 animate-slide-up stagger-6">
+            <h3 className="font-semibold text-amber-400 mb-3 sm:mb-4 text-sm sm:text-base">
               Pendientes de Entrega ({especiePendiente.length})
             </h3>
             {especiePendiente.length > 0 ? (
@@ -180,7 +180,7 @@ export default function DashboardEspecies() {
                 hideMonto
               />
             ) : (
-              <p className="text-slate-500 text-center py-4">
+              <p className="text-slate-500 text-center py-4 text-sm">
                 No hay entregas pendientes
               </p>
             )}
@@ -188,8 +188,8 @@ export default function DashboardEspecies() {
         </section>
 
         {/* Tabla Completa */}
-        <section className="card-surface rounded-xl p-6">
-          <h3 className="text-xl font-semibold mb-4">Todas las Especies</h3>
+        <section className="card-surface rounded-xl p-4 sm:p-6">
+          <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Todas las Especies</h3>
           <DataTable
             data={especieRecords}
             initialRows={15}

@@ -51,9 +51,9 @@ export default function DashboardDinero() {
         onRefresh={refresh}
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Métricas Globales */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
           <div className="animate-slide-up stagger-1">
             <MetricCard
               title="Total Recaudado"
@@ -79,7 +79,7 @@ export default function DashboardDinero() {
               subtitle={`${metricsGlobal.pagados} pagados, ${metricsGlobal.pendientesPorCerrar} pendientes`}
             />
           </div>
-          <div className="animate-slide-up stagger-4 flex justify-center">
+          <div className="animate-slide-up stagger-4 flex justify-center items-center">
             <ProgressRing
               value={metricsGlobal.tasaConversion}
               color="emerald"
@@ -91,19 +91,19 @@ export default function DashboardDinero() {
         </section>
 
         {/* Sección Directo */}
-        <section className="card-surface rounded-xl p-6 animate-slide-up stagger-5">
-          <div className="flex items-center justify-between mb-6">
+        <section className="card-surface rounded-xl p-4 sm:p-6 animate-slide-up stagger-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
             <div>
-              <h2 className="text-xl font-semibold">Aportes Directos</h2>
-              <p className="text-sm text-slate-400">
+              <h2 className="text-lg sm:text-xl font-semibold">Aportes Directos</h2>
+              <p className="text-xs sm:text-sm text-slate-400">
                 Transferencias sin prospección previa
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-mono-numbers font-bold">
+            <div className="sm:text-right">
+              <p className="text-xl sm:text-2xl font-mono-numbers font-bold">
                 {formatCurrency(metricsDirecto.totalRecaudado)}
               </p>
-              <p className="text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-400">
                 {dineroDirecto.length} empresas
               </p>
             </div>
@@ -120,26 +120,26 @@ export default function DashboardDinero() {
         </section>
 
         {/* Sección Prospección */}
-        <section className="space-y-4 animate-slide-up stagger-6">
+        <section className="space-y-3 sm:space-y-4 animate-slide-up stagger-6">
           <div>
-            <h2 className="text-xl font-semibold">Prospección Convertida</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="text-lg sm:text-xl font-semibold">Prospección Convertida</h2>
+            <p className="text-xs sm:text-sm text-slate-400">
               Empresas contactadas que confirmaron aporte
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Pendientes */}
-            <div className="card-glow-amber rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-amber-400">
+            <div className="card-glow-amber rounded-xl p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="font-semibold text-amber-400 text-sm sm:text-base">
                   Pendientes de Pago
                 </h3>
-                <span className="text-2xl font-mono-numbers font-bold">
+                <span className="text-xl sm:text-2xl font-mono-numbers font-bold">
                   {dineroPendiente.length}
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mb-4">
+              <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">
                 Pipeline:{" "}
                 <span className="font-mono-numbers text-amber-400">
                   {formatCurrency(calculateMetrics(dineroPendiente).totalRecaudado)}
@@ -156,16 +156,16 @@ export default function DashboardDinero() {
             </div>
 
             {/* Pagados */}
-            <div className="card-glow-emerald rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-emerald-400">
+            <div className="card-glow-emerald rounded-xl p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="font-semibold text-emerald-400 text-sm sm:text-base">
                   Pagos Recibidos
                 </h3>
-                <span className="text-2xl font-mono-numbers font-bold">
+                <span className="text-xl sm:text-2xl font-mono-numbers font-bold">
                   {dineroPagado.length}
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mb-4">
+              <p className="text-xs sm:text-sm text-slate-400 mb-3 sm:mb-4">
                 Recaudado:{" "}
                 <span className="font-mono-numbers text-emerald-400">
                   {formatCurrency(calculateMetrics(dineroPagado).totalRecaudado)}
@@ -185,22 +185,22 @@ export default function DashboardDinero() {
         </section>
 
         {/* Sección 1+1 */}
-        <section className="card-surface rounded-xl p-6 border-2 border-dashed border-slate-700">
-          <div className="flex items-center justify-between mb-6">
+        <section className="card-surface rounded-xl p-4 sm:p-6 border-2 border-dashed border-slate-700">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
             <div>
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <span className="text-2xl">🤝</span>
+              <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+                <span className="text-xl sm:text-2xl">🤝</span>
                 Programa 1+1
               </h2>
-              <p className="text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-400">
                 Empresas que duplican donaciones de empleados
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-mono-numbers font-bold">
+            <div className="sm:text-right">
+              <p className="text-xl sm:text-2xl font-mono-numbers font-bold">
                 {formatCurrency(metricsUnoMasUno.totalRecaudado)}
               </p>
-              <p className="text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-400">
                 {unoMasUnoRecords.length} empresas
               </p>
             </div>

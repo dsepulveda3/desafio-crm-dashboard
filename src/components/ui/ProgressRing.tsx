@@ -60,13 +60,13 @@ export function ProgressRing({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-mono-numbers text-2xl font-bold">
+          <span className="font-mono-numbers text-lg sm:text-2xl font-bold">
             {Math.round(value)}%
           </span>
         </div>
       </div>
-      <div className="flex items-center gap-2 mt-2">
-        {label && <p className="text-sm text-slate-300">{label}</p>}
+      <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
+        {label && <p className="text-xs sm:text-sm text-slate-300">{label}</p>}
         {infoTooltip && <InfoTooltip text={infoTooltip} />}
       </div>
       {sublabel && <p className="text-xs text-slate-500">{sublabel}</p>}

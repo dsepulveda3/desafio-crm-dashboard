@@ -18,15 +18,15 @@ const variantClasses = {
 };
 
 const sizeClasses = {
-  sm: "p-4",
-  md: "p-5",
-  lg: "p-6",
+  sm: "p-3 sm:p-4",
+  md: "p-3 sm:p-5",
+  lg: "p-3 sm:p-6",
 };
 
 const valueSizeClasses = {
-  sm: "text-2xl",
-  md: "text-3xl",
-  lg: "text-4xl",
+  sm: "text-lg sm:text-2xl",
+  md: "text-xl sm:text-3xl",
+  lg: "text-xl sm:text-4xl",
 };
 
 export function MetricCard({
@@ -41,11 +41,11 @@ export function MetricCard({
     <div
       className={`rounded-xl ${variantClasses[variant]} ${sizeClasses[size]} hover-lift ${className}`}
     >
-      <p className="text-sm text-slate-400 mb-1">{title}</p>
-      <p className={`font-mono-numbers font-bold ${valueSizeClasses[size]}`}>
+      <p className="text-xs sm:text-sm text-slate-400 mb-0.5 sm:mb-1 truncate">{title}</p>
+      <p className={`font-mono-numbers font-bold ${valueSizeClasses[size]} truncate`}>
         {value}
       </p>
-      {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-slate-500 mt-0.5 sm:mt-1 truncate">{subtitle}</p>}
     </div>
   );
 }
