@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface SheetResponse {
   success: boolean;
@@ -16,35 +16,38 @@ interface SheetResponse {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useSheets(refreshInterval = 10000) {
-  // Caché manual para preservar datos durante refresh
   const cachedSheets = useRef<SheetResponse['sheets'] | undefined>(undefined);
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR<SheetResponse>(
+  const { data, error, isLoading, mutate } = useSWR<SheetResponse>(
     "/api/sheets",
     fetcher,
     {
       refreshInterval,
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      keepPreviousData: true,
     }
   );
 
-  // Actualizar caché cuando tenemos datos válidos
-  if (data?.success && data.sheets) {
-    cachedSheets.current = data.sheets;
-  }
+  // Actualizar caché en useEffect para evitar problemas de render
+  useEffect(() => {
+    if (data?.success && data.sheets && data.sheets.length > 0) {
+      cachedSheets.current = data.sheets;
+    }
+  }, [data]);
 
-  // Usar datos del caché si están disponibles, sino usar data directamente
-  const sheets = cachedSheets.current ?? data?.sheets;
+  // Usar datos actuales si existen, sino usar caché
+  const sheets = (data?.success && data.sheets) ? data.sheets : cachedSheets.current;
 
-  // Solo mostrar error si hay un error real Y no tenemos datos en caché
-  const hasRealError = (error || data?.success === false) && !cachedSheets.current;
+  // Solo mostrar error si no hay datos disponibles (ni actuales ni en caché)
+  const hasError = (error || data?.success === false) && !sheets;
+
+  // Solo mostrar loading en carga inicial (no hay caché)
+  const showLoading = isLoading && !cachedSheets.current;
 
   return {
     sheets,
-    isLoading: isLoading && !cachedSheets.current,
-    isError: hasRealError,
+    isLoading: showLoading,
+    isError: hasError,
     errorMessage: data?.error || error?.message,
     refresh: mutate,
   };
