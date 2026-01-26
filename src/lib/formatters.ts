@@ -39,3 +39,30 @@ export function parseMonto(value: unknown): number {
   }
   return 0;
 }
+
+// Convierte fecha serial de Excel a Date de JavaScript
+export function excelDateToJS(serial: number | undefined): Date | null {
+  if (!serial || typeof serial !== "number") return null;
+  // Excel cuenta días desde el 1 de enero de 1900
+  // Ajuste por el bug del año bisiesto de Excel
+  const utcDays = Math.floor(serial - 25569);
+  const utcValue = utcDays * 86400 * 1000;
+  return new Date(utcValue);
+}
+
+// Compara si una fecha está dentro de un rango
+export function isDateInRange(
+  date: Date | null,
+  from: Date | null,
+  to: Date | null
+): boolean {
+  if (!date) return false;
+  if (from && date < from) return false;
+  if (to) {
+    // Ajustar "to" al final del día
+    const toEnd = new Date(to);
+    toEnd.setHours(23, 59, 59, 999);
+    if (date > toEnd) return false;
+  }
+  return true;
+}

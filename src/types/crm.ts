@@ -11,6 +11,7 @@ export interface DonacionRecord {
   Tipo: TipoAporte;
   "Cierre Aporte": CierreAporte;
   "Monto Donación": number | string | undefined;
+  "Fecha de cierre"?: number; // Excel serial date
   Comentario?: string;
 }
 

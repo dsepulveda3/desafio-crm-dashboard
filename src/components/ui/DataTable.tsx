@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { StatusBadge } from "./StatusBadge";
-import { formatCurrency, parseMonto } from "@/lib/formatters";
+import { formatCurrency, parseMonto, excelDateToJS, isDateInRange } from "@/lib/formatters";
 import { DonacionRecord } from "@/types/crm";
 
 interface DataTableProps {
@@ -23,24 +23,40 @@ export function DataTable({
   showDateFilter = false,
 }: DataTableProps) {
   const [displayCount, setDisplayCount] = useState(initialRows);
-  const [dateFilter, setDateFilter] = useState<string>("");
+  const [fechaDesde, setFechaDesde] = useState<string>("");
+  const [fechaHasta, setFechaHasta] = useState<string>("");
 
-  // Filtrar por fecha si está activo
+  // Filtrar por rango de fechas
   const filteredData = useMemo(() => {
-    if (!showDateFilter || !dateFilter) return data;
-    // Parsear fecha del filtro
-    const filterDate = new Date(dateFilter);
+    if (!showDateFilter || (!fechaDesde && !fechaHasta)) return data;
+
+    const fromDate = fechaDesde ? new Date(fechaDesde) : null;
+    const toDate = fechaHasta ? new Date(fechaHasta) : null;
+
     return data.filter((row) => {
-      // Asumiendo que puede haber un campo de fecha (por ahora no filtramos ya que no hay campo fecha en los datos)
-      return true;
+      const rowDate = excelDateToJS(row["Fecha de cierre"]);
+      // Si no tiene fecha, mostrar solo si no hay filtros activos
+      if (!rowDate) return !fechaDesde && !fechaHasta;
+      return isDateInRange(rowDate, fromDate, toDate);
     });
-  }, [data, dateFilter, showDateFilter]);
+  }, [data, fechaDesde, fechaHasta, showDateFilter]);
+
+  // Calcular total filtrado
+  const filteredTotal = useMemo(() => {
+    return filteredData.reduce((sum, row) => sum + parseMonto(row["Monto Donación"]), 0);
+  }, [filteredData]);
 
   const displayData = filteredData.slice(0, displayCount);
   const hasMore = displayCount < filteredData.length;
+  const hasActiveFilter = fechaDesde || fechaHasta;
 
   const handleShowMore = () => {
     setDisplayCount((prev) => prev + 20);
+  };
+
+  const handleClearFilters = () => {
+    setFechaDesde("");
+    setFechaHasta("");
   };
 
   if (data.length === 0) {
@@ -54,21 +70,41 @@ export function DataTable({
   return (
     <div className="space-y-3 sm:space-y-4">
       {showDateFilter && (
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <label className="text-xs sm:text-sm text-slate-400">Filtrar:</label>
-          <input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:border-slate-500"
-          />
-          {dateFilter && (
-            <button
-              onClick={() => setDateFilter("")}
-              className="text-xs sm:text-sm text-slate-400 hover:text-white"
-            >
-              Limpiar
-            </button>
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <label className="text-xs sm:text-sm text-slate-400">Desde:</label>
+            <input
+              type="date"
+              value={fechaDesde}
+              onChange={(e) => setFechaDesde(e.target.value)}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:border-slate-500"
+            />
+            <label className="text-xs sm:text-sm text-slate-400">Hasta:</label>
+            <input
+              type="date"
+              value={fechaHasta}
+              onChange={(e) => setFechaHasta(e.target.value)}
+              className="bg-slate-800 border border-slate-700 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm focus:outline-none focus:border-slate-500"
+            />
+            {hasActiveFilter && (
+              <button
+                onClick={handleClearFilters}
+                className="text-xs sm:text-sm text-slate-400 hover:text-white"
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
+          {hasActiveFilter && !hideMonto && (
+            <div className="text-xs sm:text-sm text-slate-300">
+              Total filtrado:{" "}
+              <span className="font-mono-numbers font-semibold text-emerald-400">
+                {formatCurrency(filteredTotal)}
+              </span>
+              <span className="text-slate-500 ml-2">
+                ({filteredData.length} registros)
+              </span>
+            </div>
           )}
         </div>
       )}
