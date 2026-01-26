@@ -5,13 +5,16 @@ export type Origen = "Directo" | "Convertido Pendiente" | "Convertido Pagado" | 
 export type CierreAporte = "Listo" | "En proceso" | "No" | "Pendiente" | "No Aplica" | "Entregado" | "";
 
 export interface DonacionRecord {
-  Empresa: string;
-  Origen: Origen;
+  // Nota: El Excel tiene "Origen" como nombre de empresa y " " (espacio) como estado
+  Origen: string; // Este es el nombre de la Empresa
+  " ": Origen; // Este es el estado (Convertido Pagado, etc.)
   "Responsable ": string;
   Tipo: TipoAporte;
   "Cierre Aporte": CierreAporte;
   "Monto Donación": number | string | undefined;
-  Comentario: string;
+  Comentario?: string;
+  // Alias para compatibilidad
+  Empresa?: string;
 }
 
 export interface DashboardMetrics {
