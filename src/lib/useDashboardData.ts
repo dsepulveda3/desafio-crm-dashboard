@@ -29,9 +29,8 @@ export function useDashboardData(refreshInterval = 10000) {
   );
 
   // Dinero: Directo vs Prospección
-  // Nota: El estado está en la columna " " (espacio), no en "Origen"
   const dineroDirecto = useMemo(
-    () => dineroRecords.filter((r) => r[" "] === "Directo"),
+    () => dineroRecords.filter((r) => r.Origen === "Directo"),
     [dineroRecords]
   );
 
@@ -39,21 +38,21 @@ export function useDashboardData(refreshInterval = 10000) {
     () =>
       dineroRecords.filter(
         (r) =>
-          r[" "] === "Convertido Pendiente" ||
-          r[" "] === "Convertido Pagado"
+          r.Origen === "Convertido Pendiente" ||
+          r.Origen === "Convertido Pagado"
       ),
     [dineroRecords]
   );
 
   const dineroPendiente = useMemo(
     () => dineroRecords.filter((r) =>
-      r[" "] === "Convertido Pendiente" && r.Tipo !== "1+1"
+      r.Origen === "Convertido Pendiente" && r.Tipo !== "1+1"
     ),
     [dineroRecords]
   );
 
   const dineroPagado = useMemo(
-    () => dineroRecords.filter((r) => r[" "] === "Convertido Pagado"),
+    () => dineroRecords.filter((r) => r.Origen === "Convertido Pagado"),
     [dineroRecords]
   );
 
@@ -65,12 +64,12 @@ export function useDashboardData(refreshInterval = 10000) {
 
   // Especies por estado (Convertido Pagado = Entregado, Convertido Pendiente = Pendiente)
   const especieEntregado = useMemo(
-    () => especieRecords.filter((r) => r[" "] === "Convertido Pagado"),
+    () => especieRecords.filter((r) => r.Origen === "Convertido Pagado"),
     [especieRecords]
   );
 
   const especiePendiente = useMemo(
-    () => especieRecords.filter((r) => r[" "] === "Convertido Pendiente"),
+    () => especieRecords.filter((r) => r.Origen === "Convertido Pendiente"),
     [especieRecords]
   );
 
@@ -81,9 +80,9 @@ export function useDashboardData(refreshInterval = 10000) {
       (sum, r) => sum + parseMonto(r["Monto Donación"]),
       0
     );
-    const pagados = data.filter((r) => r[" "] === "Convertido Pagado").length;
+    const pagados = data.filter((r) => r.Origen === "Convertido Pagado").length;
     const pendientes = data.filter(
-      (r) => r[" "] === "Convertido Pendiente"
+      (r) => r.Origen === "Convertido Pendiente"
     ).length;
 
     return {
@@ -142,9 +141,9 @@ export function useDashboardData(refreshInterval = 10000) {
           0
         ),
         cantidadEmpresas: recs.length,
-        pendientes: recs.filter((r) => r[" "] === "Convertido Pendiente")
+        pendientes: recs.filter((r) => r.Origen === "Convertido Pendiente")
           .length,
-        pagados: recs.filter((r) => r[" "] === "Convertido Pagado").length,
+        pagados: recs.filter((r) => r.Origen === "Convertido Pagado").length,
       }))
       .sort((a, b) => b.totalRecaudado - a.totalRecaudado);
   };

@@ -87,9 +87,8 @@ export function DataTable({
           <tbody>
             {displayData.map((row, idx) => {
               const monto = parseMonto(row["Monto Donación"]);
-              // Nota: "Origen" contiene el nombre de empresa, " " contiene el estado
-              const empresa = row.Origen;
-              const estado = row[" "];
+              const empresa = row.Empresa;
+              const estado = row.Origen;
               return (
                 <tr key={`${empresa}-${idx}`}>
                   <td className="font-medium max-w-[120px] sm:max-w-none truncate">{empresa}</td>
