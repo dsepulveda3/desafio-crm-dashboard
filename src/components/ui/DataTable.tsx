@@ -34,7 +34,7 @@ export function DataTable({
     const toDate = fechaHasta ? new Date(fechaHasta) : null;
 
     return data.filter((row) => {
-      const rowDate = excelDateToJS(row["Fecha de cierre"]);
+      const rowDate = excelDateToJS(row.fechaCierre);
       // Si no tiene fecha, mostrar solo si no hay filtros activos
       if (!rowDate) return !fechaDesde && !fechaHasta;
       return isDateInRange(rowDate, fromDate, toDate);
@@ -43,7 +43,7 @@ export function DataTable({
 
   // Calcular total filtrado
   const filteredTotal = useMemo(() => {
-    return filteredData.reduce((sum, row) => sum + parseMonto(row["Monto Donación"]), 0);
+    return filteredData.reduce((sum, row) => sum + parseMonto(row.monto), 0);
   }, [filteredData]);
 
   const displayData = filteredData.slice(0, displayCount);
@@ -122,18 +122,16 @@ export function DataTable({
           </thead>
           <tbody>
             {displayData.map((row, idx) => {
-              const monto = parseMonto(row["Monto Donación"]);
-              const empresa = row.Empresa;
-              const estado = row.Origen;
+              const monto = parseMonto(row.monto);
               return (
-                <tr key={`${empresa}-${idx}`}>
-                  <td className="font-medium max-w-[120px] sm:max-w-none truncate">{empresa}</td>
+                <tr key={`${row.empresa}-${idx}`}>
+                  <td className="font-medium max-w-[120px] sm:max-w-none truncate">{row.empresa}</td>
                   <td>
-                    <StatusBadge status={estado} />
+                    <StatusBadge status={row.estado} />
                   </td>
                   {!compact && (
                     <td className="text-slate-400 hidden sm:table-cell">
-                      {row["Responsable "]?.trim() || "Sin asignar"}
+                      {row.responsable || "Sin asignar"}
                     </td>
                   )}
                   {!hideMonto && (
@@ -143,7 +141,7 @@ export function DataTable({
                   )}
                   {!hideEstado && (
                     <td>
-                      <StatusBadge status={row["Cierre Aporte"]} />
+                      <StatusBadge status={row.cierreAporte} />
                     </td>
                   )}
                 </tr>

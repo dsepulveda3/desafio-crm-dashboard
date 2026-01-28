@@ -2,8 +2,9 @@
 
 import { useSheet } from "./useSheets";
 import { useMemo } from "react";
-import { DonacionRecord, DashboardMetrics, ResponsableStats } from "@/types/crm";
+import { RawExcelRecord, DonacionRecord, DashboardMetrics, ResponsableStats } from "@/types/crm";
 import { parseMonto } from "./formatters";
+import { normalizeRecords } from "./normalizeData";
 import { SHEET_NAME } from "./constants";
 
 export function useDashboardData(refreshInterval = 10000) {
@@ -12,25 +13,27 @@ export function useDashboardData(refreshInterval = 10000) {
     refreshInterval
   );
 
+  // Normalizar datos crudos del Excel
   const records = useMemo(() => {
     if (!data) return [];
-    return data as unknown as DonacionRecord[];
+    const rawData = data as unknown as RawExcelRecord[];
+    return normalizeRecords(rawData);
   }, [data]);
 
   // Filtros por tipo
   const dineroRecords = useMemo(
-    () => records.filter((r) => r.Tipo === "Dinero" || r.Tipo === "1+1"),
+    () => records.filter((r) => r.tipo === "Dinero" || r.tipo === "1+1"),
     [records]
   );
 
   const especieRecords = useMemo(
-    () => records.filter((r) => r.Tipo === "Especie"),
+    () => records.filter((r) => r.tipo === "Especie"),
     [records]
   );
 
   // Dinero: Directo vs Prospección
   const dineroDirecto = useMemo(
-    () => dineroRecords.filter((r) => r.Origen === "Directo"),
+    () => dineroRecords.filter((r) => r.estado === "Directo"),
     [dineroRecords]
   );
 
@@ -38,51 +41,51 @@ export function useDashboardData(refreshInterval = 10000) {
     () =>
       dineroRecords.filter(
         (r) =>
-          r.Origen === "Convertido Pendiente" ||
-          r.Origen === "Convertido Pagado"
+          r.estado === "Convertido Pendiente" ||
+          r.estado === "Convertido Pagado"
       ),
     [dineroRecords]
   );
 
   const dineroPendiente = useMemo(
     () => dineroRecords.filter((r) =>
-      r.Origen === "Convertido Pendiente" && r.Tipo !== "1+1"
+      r.estado === "Convertido Pendiente" && r.tipo !== "1+1"
     ),
     [dineroRecords]
   );
 
   const dineroPagado = useMemo(
-    () => dineroRecords.filter((r) => r.Origen === "Convertido Pagado"),
+    () => dineroRecords.filter((r) => r.estado === "Convertido Pagado"),
     [dineroRecords]
   );
 
   // 1+1 específicos
   const unoMasUnoRecords = useMemo(
-    () => records.filter((r) => r.Tipo === "1+1"),
+    () => records.filter((r) => r.tipo === "1+1"),
     [records]
   );
 
   // Especies por estado (Convertido Pagado = Entregado, Convertido Pendiente = Pendiente)
   const especieEntregado = useMemo(
-    () => especieRecords.filter((r) => r.Origen === "Convertido Pagado"),
+    () => especieRecords.filter((r) => r.estado === "Convertido Pagado"),
     [especieRecords]
   );
 
   const especiePendiente = useMemo(
-    () => especieRecords.filter((r) => r.Origen === "Convertido Pendiente"),
+    () => especieRecords.filter((r) => r.estado === "Convertido Pendiente"),
     [especieRecords]
   );
 
   // Calcular métricas
   const calculateMetrics = (data: DonacionRecord[]): DashboardMetrics => {
-    const conMonto = data.filter((r) => parseMonto(r["Monto Donación"]) > 0);
+    const conMonto = data.filter((r) => parseMonto(r.monto) > 0);
     const totalRecaudado = conMonto.reduce(
-      (sum, r) => sum + parseMonto(r["Monto Donación"]),
+      (sum, r) => sum + parseMonto(r.monto),
       0
     );
-    const pagados = data.filter((r) => r.Origen === "Convertido Pagado").length;
+    const pagados = data.filter((r) => r.estado === "Convertido Pagado").length;
     const pendientes = data.filter(
-      (r) => r.Origen === "Convertido Pendiente"
+      (r) => r.estado === "Convertido Pendiente"
     ).length;
 
     return {
@@ -103,15 +106,15 @@ export function useDashboardData(refreshInterval = 10000) {
   // Total Pendiente = Convertido Pendiente
   const calculateDineroTotals = useMemo(() => {
     const directoTotal = dineroDirecto.reduce(
-      (sum, r) => sum + parseMonto(r["Monto Donación"]),
+      (sum, r) => sum + parseMonto(r.monto),
       0
     );
     const pagadoTotal = dineroPagado.reduce(
-      (sum, r) => sum + parseMonto(r["Monto Donación"]),
+      (sum, r) => sum + parseMonto(r.monto),
       0
     );
     const pendienteTotal = dineroPendiente.reduce(
-      (sum, r) => sum + parseMonto(r["Monto Donación"]),
+      (sum, r) => sum + parseMonto(r.monto),
       0
     );
 
@@ -128,7 +131,7 @@ export function useDashboardData(refreshInterval = 10000) {
     const byResponsable = new Map<string, DonacionRecord[]>();
 
     data.forEach((r) => {
-      const resp = r["Responsable "]?.trim() || "Sin asignar";
+      const resp = r.responsable || "Sin asignar";
       if (!byResponsable.has(resp)) byResponsable.set(resp, []);
       byResponsable.get(resp)!.push(r);
     });
@@ -137,13 +140,13 @@ export function useDashboardData(refreshInterval = 10000) {
       .map(([nombre, recs]) => ({
         nombre,
         totalRecaudado: recs.reduce(
-          (sum, r) => sum + parseMonto(r["Monto Donación"]),
+          (sum, r) => sum + parseMonto(r.monto),
           0
         ),
         cantidadEmpresas: recs.length,
-        pendientes: recs.filter((r) => r.Origen === "Convertido Pendiente")
+        pendientes: recs.filter((r) => r.estado === "Convertido Pendiente")
           .length,
-        pagados: recs.filter((r) => r.Origen === "Convertido Pagado").length,
+        pagados: recs.filter((r) => r.estado === "Convertido Pagado").length,
       }))
       .sort((a, b) => b.totalRecaudado - a.totalRecaudado);
   };
@@ -151,7 +154,7 @@ export function useDashboardData(refreshInterval = 10000) {
   // Lista única de responsables
   const responsables = useMemo(() => {
     const unique = new Set(
-      records.map((r) => r["Responsable "]?.trim()).filter(Boolean)
+      records.map((r) => r.responsable).filter(Boolean)
     );
     return Array.from(unique).sort();
   }, [records]);

@@ -1,18 +1,37 @@
 export type TipoAporte = "Dinero" | "Especie" | "1+1" | "Difusión Masiva" | "Servicios" | "";
 
-export type Origen = "Directo" | "Convertido Pendiente" | "Convertido Pagado" | "";
+export type OrigenStatus = "Directo" | "Convertido Pendiente" | "Convertido Pagado" | "";
 
 export type CierreAporte = "Listo" | "En proceso" | "No" | "Pendiente" | "No Aplica" | "Entregado" | "";
 
-export interface DonacionRecord {
-  Empresa: string;
-  Origen: Origen;
-  "Responsable ": string;
-  Tipo: TipoAporte;
-  "Cierre Aporte": CierreAporte;
-  "Monto Donación": number | string | undefined;
-  "Fecha de cierre"?: number; // Excel serial date
+// Datos crudos del Excel (pueden variar las columnas)
+export interface RawExcelRecord {
+  // Posibles nombres para empresa
+  Empresa?: string;
+  Origen?: string;
+  // Posibles nombres para estado
+  Origen_1?: string;
+  // Otros campos
+  "Responsable "?: string;
+  Tipo?: TipoAporte;
+  "Cierre Aporte"?: CierreAporte;
+  "Monto Donación"?: number | string;
+  "Fecha de cierre"?: number;
   Comentario?: string;
+  [key: string]: unknown; // Para otros campos desconocidos
+}
+
+// Datos normalizados (siempre consistentes)
+export interface DonacionRecord {
+  empresa: string;
+  estado: OrigenStatus;
+  responsable: string;
+  tipo: TipoAporte;
+  cierreAporte: CierreAporte;
+  monto: number | string | undefined;
+  fechaCierre?: number;
+  comentario?: string;
+  _raw: RawExcelRecord; // Guardar datos originales por si acaso
 }
 
 export interface DashboardMetrics {
