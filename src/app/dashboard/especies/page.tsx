@@ -13,6 +13,7 @@ export default function DashboardEspecies() {
     especieEntregado,
     especiePendiente,
     calculateMetrics,
+    calculateEspeciesTotals,
     isLoading,
     isError,
     refresh,
@@ -20,6 +21,7 @@ export default function DashboardEspecies() {
 
   // Métricas
   const metricsGlobal = calculateMetrics(especieRecords);
+  const especiesTotals = calculateEspeciesTotals;
   const progresoEntrega =
     especieRecords.length > 0
       ? (especieEntregado.length / especieRecords.length) * 100
@@ -52,13 +54,12 @@ export default function DashboardEspecies() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Métricas Globales */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+        <section className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-4">
           <div className="animate-slide-up stagger-1">
             <MetricCard
               title="Empresas Comprometidas"
               value={metricsGlobal.cantidadDonantes}
               variant="cyan"
-              size="lg"
             />
           </div>
           <div className="animate-slide-up stagger-2">
@@ -77,9 +78,16 @@ export default function DashboardEspecies() {
           </div>
           <div className="animate-slide-up stagger-4">
             <MetricCard
-              title="Valor Estimado"
-              value={formatCurrency(metricsGlobal.totalRecaudado)}
-              subtitle="Solo registros con monto"
+              title="Monto Entregado"
+              value={formatCurrency(especiesTotals.totalEntregado)}
+              variant="emerald"
+            />
+          </div>
+          <div className="animate-slide-up stagger-5">
+            <MetricCard
+              title="Monto Pendiente"
+              value={formatCurrency(especiesTotals.totalPendiente)}
+              variant="amber"
             />
           </div>
         </section>

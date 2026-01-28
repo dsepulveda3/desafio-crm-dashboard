@@ -126,6 +126,24 @@ export function useDashboardData(refreshInterval = 10000) {
     };
   }, [dineroDirecto, dineroPagado, dineroPendiente]);
 
+  // Totales específicos para Dashboard Especies
+  const calculateEspeciesTotals = useMemo(() => {
+    const entregadoTotal = especieEntregado.reduce(
+      (sum, r) => sum + parseMonto(r.monto),
+      0
+    );
+    const pendienteTotal = especiePendiente.reduce(
+      (sum, r) => sum + parseMonto(r.monto),
+      0
+    );
+
+    return {
+      totalEntregado: entregadoTotal,
+      totalPendiente: pendienteTotal,
+      totalGeneral: entregadoTotal + pendienteTotal,
+    };
+  }, [especieEntregado, especiePendiente]);
+
   // Stats por responsable
   const getResponsableStats = (data: DonacionRecord[]): ResponsableStats[] => {
     const byResponsable = new Map<string, DonacionRecord[]>();
@@ -177,6 +195,7 @@ export function useDashboardData(refreshInterval = 10000) {
     responsables,
     calculateMetrics,
     calculateDineroTotals,
+    calculateEspeciesTotals,
     getResponsableStats,
   };
 }

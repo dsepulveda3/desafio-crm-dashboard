@@ -26,20 +26,25 @@ export function DataTable({
   const [fechaDesde, setFechaDesde] = useState<string>("");
   const [fechaHasta, setFechaHasta] = useState<string>("");
 
+  // Ordenar por monto descendente
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => parseMonto(b.monto) - parseMonto(a.monto));
+  }, [data]);
+
   // Filtrar por rango de fechas
   const filteredData = useMemo(() => {
-    if (!showDateFilter || (!fechaDesde && !fechaHasta)) return data;
+    if (!showDateFilter || (!fechaDesde && !fechaHasta)) return sortedData;
 
     const fromDate = fechaDesde ? new Date(fechaDesde) : null;
     const toDate = fechaHasta ? new Date(fechaHasta) : null;
 
-    return data.filter((row) => {
+    return sortedData.filter((row) => {
       const rowDate = excelDateToJS(row.fechaCierre);
       // Si no tiene fecha, mostrar solo si no hay filtros activos
       if (!rowDate) return !fechaDesde && !fechaHasta;
       return isDateInRange(rowDate, fromDate, toDate);
     });
-  }, [data, fechaDesde, fechaHasta, showDateFilter]);
+  }, [sortedData, fechaDesde, fechaHasta, showDateFilter]);
 
   // Calcular total filtrado
   const filteredTotal = useMemo(() => {
